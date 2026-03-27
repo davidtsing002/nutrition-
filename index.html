@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新版中医体质测评</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .progress-bar {
+            background: #f0f0f0;
+            height: 8px;
+            position: relative;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            text-align: center;
+            padding: 10px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .question-container {
+            padding: 30px;
+        }
+
+        .constitution-type {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .question {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            animation: slideIn 0.5s ease;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 18px 25px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.02);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 20px 30px;
+            background: #f9f9f9;
+        }
+
+        .nav-btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-prev {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-prev:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* 结果页面样式 */
+        .result-container {
+            padding: 30px;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .result-title {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .constitution-result {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            animation: scaleIn 0.6s ease;
+        }
+
+        .constitution-result h2 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .constitution-result p {
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+
+        .constitution-details {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+
+        .constitution-details h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .constitution-details p {
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .all-scores {
+            margin-top: 30px;
+        }
+
+        .all-scores h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #667eea;
+            font-size: 1.5em;
+        }
+
+        .score-item {
+            background: white;
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .score-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+        }
+
+        .score-item.constitution-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .score-item .score {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .score-item.main {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .score-item.main .constitution-name {
+            color: white;
+        }
+
+        .score-item.main .score {
+            color: white;
+        }
+
+        .restart-btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* 欢迎页面 */
+        .welcome-page {
+            padding: 40px;
+            text-align: center;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .welcome-icon {
+            font-size: 6em;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .gender-selection {
+            margin: 40px 0;
+        }
+
+        .gender-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .gender-option {
+            flex: 1;
+            max-width: 200px;
+            padding: 30px 20px;
+            border: 3px solid #e0e0e0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            background: white;
+        }
+
+        .gender-option:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .gender-option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transform: scale(1.05);
+        }
+
+        .gender-option .icon {
+            font-size: 4em;
+            margin-bottom: 10px;
+        }
+
+        .gender-option .label {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .gender-option.selected .label {
+            color: white;
+        }
+
+        .gender-option.selected .icon {
+            filter: brightness(0) invert(1);
+        }
+
+        .welcome-page h2 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .welcome-page p {
+            line-height: 1.8;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 60px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.3em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        /* 动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .question-text {
+                font-size: 1.1em;
+            }
+
+            .option {
+                padding: 15px 20px;
+                font-size: 1em;
+            }
+
+            .navigation {
+                flex-direction: column;
+            }
+
+            .nav-btn {
+                width: 100%;
+            }
+
+            .constitution-result h2 {
+                font-size: 2em;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌿 新版中医体质测评</h1>
+            <p>基于GB/T46939—2025国家标准</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">准备开始</div>
+
+        <!-- 欢迎页面 -->
+        <div class="welcome-page" id="welcomePage">
+            <div class="welcome-icon">🧑‍⚕️</div>
+            <h2>中医体质测评</h2>
+            <p>请选择您的性别开始测评</p>
+
+            <div class="gender-selection">
+                <div class="gender-options">
+                    <div class="gender-option" onclick="selectGender('male')" id="maleOption">
+                        <div class="icon">👨</div>
+                        <div class="label">男性</div>
+                    </div>
+                    <div class="gender-option" onclick="selectGender('female')" id="femaleOption">
+                        <div class="icon">👩</div>
+                        <div class="label">女性</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="start-btn btn-disabled" id="startBtn" onclick="startAssessment()" disabled>开始测评</button>
+        </div>
+
+        <!-- 题目页面 -->
+        <div class="question-container hidden" id="questionContainer">
+            <div class="constitution-type" id="constitutionType"></div>
+            <div class="question">
+                <div class="question-text" id="questionText"></div>
+                <div class="options" id="options"></div>
+            </div>
+        </div>
+
+        <!-- 导航按钮 -->
+        <div class="navigation hidden" id="navigation">
+            <button class="nav-btn btn-prev" id="prevBtn" onclick="prevQuestion()">上一题</button>
+            <button class="nav-btn btn-next" id="nextBtn" onclick="nextQuestion()">下一题</button>
+        </div>
+
+        <!-- 结果页面 -->
+        <div class="result-container hidden" id="resultContainer">
+            <h2 class="result-title">测评结果</h2>
+            <div class="constitution-result" id="constitutionResult">
+                <h2 id="resultType"></h2>
+                <p id="resultStatus"></p>
+            </div>
+            <div class="constitution-details">
+                <h3>体质特征</h3>
+                <p id="resultFeatures"></p>
+            </div>
+            <div class="constitution-details">
+                <h3>常见表现</h3>
+                <p id="resultManifestations"></p>
+            </div>
+            <div class="constitution-details">
+                <h3>发病倾向</h3>
+                <p id="resultDiseases"></p>
+            </div>
+            <div class="constitution-details">
+                <h3>适应能力</h3>
+                <p id="resultAdaptation"></p>
+            </div>
+            <div class="all-scores">
+                <h3>各项体质得分</h3>
+                <div id="allScores"></div>
+            </div>
+            <button class="restart-btn" onclick="restartAssessment()">重新测评</button>
+        </div>
+    </div>
+
+    <script>
+        // 体质数据
+        const constitutions = {
+            pinghe: {
+                name: '平和质',
+                type: '正常体质',
+                questions: [
+                    { text: '您精力充沛吗?', reverse: false, gender: 'all' },
+                    { text: '您容易疲乏吗?', reverse: true, gender: 'all' },
+                    { text: '您感到闷闷不乐、情绪低沉吗?', reverse: true, gender: 'all' },
+                    { text: '您比一般人耐受不了寒冷(冬天的寒冷、夏天的冷空调、电扇等)吗?', reverse: true, gender: 'all' }
+                ],
+                features: '阴阳气血调和,体态适中,面色红润,精力充沛。',
+                manifestations: '面色、肤色润泽,头发稠密有光泽,目光有神,鼻色明润,嗅觉通利,唇色红润,不易疲劳,精力充沛,耐受寒热,睡眠良好,胃纳佳,二便正常。',
+                diseases: '平素患病较少。',
+                adaptation: '对自然环境和社会环境适应能力较强。'
+            },
+            qixu: {
+                name: '气虚质',
+                type: '偏颇体质',
+                questions: [
+                    { text: '您容易疲乏吗?', reverse: false, gender: 'all' },
+                    { text: '您容易气短(呼吸短促、接不上气)吗?', reverse: false, gender: 'all' },
+                    { text: '您容易心慌吗?', reverse: false, gender: 'all' }
+                ],
+                features: '元气不足,以疲乏、气短、自汗等为主要特征。',
+                manifestations: '平素语音低弱,气短懒言,容易疲乏,精神不振,易出汗,舌淡红,舌边有齿痕,脉弱。',
+                diseases: '易患感冒、内脏下垂、肥胖、骨质疏松、老年便秘、慢性疲劳综合征、焦虑症等病,病后康复缓慢。',
+                adaptation: '不耐受风、寒、暑、湿、热邪。'
+            },
+            yangxu: {
+                name: '阳虚质',
+                type: '偏颇体质',
+                questions: [
+                    { text: '您胃脘部、背部或腰膝部怕冷吗?', reverse: false, gender: 'all' },
+                    { text: '您感到怕冷、衣服比别人穿得多吗?', reverse: false, gender: 'all' },
+                    { text: '您比一般人耐受不了寒冷(冬天的寒冷、夏天的冷空调、电扇等)吗?', reverse: false, gender: 'all' }
+                ],
+                features: '阳气不足,以畏寒怕冷、手足不温等虚寒表现为主要特征。',
+                manifestations: '平素畏冷,手足不温,喜热饮食,精神不振,舌淡胖嫩,或舌边有齿痕,脉沉迟。',
+                diseases: '易患痰饮、肿胀、泄泻、骨质疏松、慢性疲劳综合征、原发性痛经、膝关节炎等病,感邪易从寒化。',
+                adaptation: '耐夏不耐冬,易感风、寒、湿邪。'
+            },
+            yinxu: {
+                name: '阴虚质',
+                type: '偏颇体质',
+                questions: [
+                    { text: '您感觉身体、脸上发热吗?', reverse: false, gender: 'all' },
+                    { text: '您皮肤或口唇干吗?', reverse: false, gender: 'all' },
+                    { text: '您面部两颧潮红或偏红吗?', reverse: false, gender: 'all' }
+                ],
+                features: '阴液亏少,以口燥咽干、手足心热等虚热表现为主要特征。',
+                manifestations: '手足心热,眼睛干涩,口燥咽干,鼻微干,喜冷饮,大便干燥,舌红少津,脉细数。',
+                diseases: '易患虚劳、遗精、不寐、骨质疏松症、糖尿病、高血压、偏头痛、功能性便秘、肌少症、干眼症等病,感邪易从热化。',
+                adaptation: '耐冬不耐夏,不耐受暑、热、燥邪。'
+            },
+            tanshi: {
+                name: '痰湿质',
+                type: '偏颇体质',
+                questions: [
+                    { text: '您感到身体沉重不轻松或不爽快吗?', reverse: false, gender: 'all' },
+                    { text: '您腹部肥满松软吗?', reverse: false, gender: 'all' },
+                    { text: '您嘴里有黏黏的感觉吗?', reverse: false, gender: 'all' }
+                ],
+                features: '痰湿凝聚,以形体肥胖、腹部肥满、口黏苔腻等为主要特征。',
+                manifestations: '体形肥胖,腹部肥满松软,面部皮肤油脂较多,多汗且黏,胸闷,痰多,口黏腻或甜,喜食肥甘甜黏,舌胖大,苔腻,脉滑。',
+                diseases: '易患消渴、中风、胸痹、失眠、代谢综合征、肥胖、高血压、高脂血症、脂肪肝、肝硬化、高尿酸血症、肠息肉、多囊卵巢综合征等病。',
+                adaptation: '对梅雨季节及潮湿环境适应能力差。'
+            },
+            shire: {
+                name: '湿热质',
+                type: '偏颇体质',
+                questions: [
+                    { text: '您面部或鼻部有油腻感或者油亮发光吗?', reverse: false, gender: 'all' },
+                    { text: '您小便时尿道有发热感、尿色浓(深)吗?', reverse: false, gender: 'all' },
+                    { text: '您带下色黄(白带颜色发黄)吗?', reverse: false, gender: 'female' },
+                    { text: '您的阴囊部位潮湿吗?', reverse: false, gender: 'male' }
+                ],
+                features: '湿热内蕴,以面垢油光、口苦、苔黄腻等为主要特征。',
+                manifestations: '面垢油光,易生痤疮,口苦口干,身重困倦,大便黏滞不畅或燥结,小便短黄,男性易阴囊潮湿,女性易带下色黄量多,舌质偏红,苔黄腻,脉滑数。',
+                diseases: '易患痤疮、黄疸、热淋、不寐、消渴、高尿酸血症、非酒精性脂肪性肝病、肝硬化、肠息肉等病。',
+                adaptation: '对夏末秋初湿热气候、潮湿或气温偏高环境较难适应。'
+            },
+            xueyu: {
+                name: '血瘀质',
+                type: '偏颇体质',
+                questions: [
+                    { text: '您身体上有哪里疼痛吗?', reverse: false, gender: 'all' },
+                    { text: '您面色晦暗或容易出现褐斑吗?', reverse: false, gender: 'all' },
+                    { text: '您口唇颜色偏暗吗?', reverse: false, gender: 'all' }
+                ],
+                features: '血行不畅,以肤色晦暗、舌质紫暗等为主要特征。',
+                manifestations: '肤色晦暗,色素沉着,容易出现瘀斑,口唇色暗,舌暗或有瘀点,舌下络脉紫暗或增粗,脉涩。',
+                diseases: '易患癥瘕、痛证、血证、消渴、心血管疾病、高血压、动脉粥样硬化、冠心病、突发性耳聋、子宫内膜异位症等。',
+                adaptation: '不耐受寒邪。'
+            },
+            qiyu: {
+                name: '气郁质',
+                type: '偏颇体质',
+                questions: [
+                    { text: '您感到闷闷不乐、情绪低沉吗?', reverse: false, gender: 'all' },
+                    { text: '您容易精神紧张、焦虑不安吗?', reverse: false, gender: 'all' },
+                    { text: '您多愁善感、感情脆弱吗?', reverse: false, gender: 'all' }
+                ],
+                features: '气机郁滞,以神情抑郁、忧虑脆弱等为主要特征。',
+                manifestations: '神情抑郁,情感脆弱,烦闷不乐,舌淡红,苔薄白,脉弦。',
+                diseases: '易患脏躁、梅核气、百合病、郁证、抑郁、瘿瘤、不寐、认知衰弱等。',
+                adaptation: '对精神刺激适应能力较差,不适应阴雨天气。'
+            },
+            tebing: {
+                name: '特禀质',
+                type: '偏颇体质',
+                questions: [
+                    { text: '您没有感冒时也会打喷嚏吗?', reverse: false, gender: 'all' },
+                    { text: '您容易过敏(对药物、食物、气味、花粉或在季节交替、气候变化时)吗?', reverse: false, gender: 'all' },
+                    { text: '您的皮肤容易起荨麻疹(风团、风疹块、风疙瘩)吗?', reverse: false, gender: 'all' },
+                    { text: '您的皮肤一抓就红,并出现抓痕吗?', reverse: false, gender: 'all' }
+                ],
+                features: '禀赋不耐,以过敏反应等为主要特征。',
+                manifestations: '常见哮喘、风团、咽痒、鼻塞、喷嚏等,多见齿痕舌。',
+                diseases: '易患哮喘、荨麻疹、花粉症及药物过敏等。',
+                adaptation: '适应能力差,对易致敏季节适应能力差,易引发宿疾。'
+            }
+        };
+
+        // 测评状态
+        let selectedGender = '';
+        let currentConstitution = '';
+        let currentQuestionIndex = 0;
+        let allAnswers = {};
+
+        // 扁平化题目
+        let allQuestions = [];
+        let questionConstitutionMap = [];
+
+        function flattenQuestions(gender) {
+            allQuestions = [];
+            questionConstitutionMap = [];
+            Object.keys(constitutions).forEach(key => {
+                const constitution = constitutions[key];
+                constitution.questions.forEach((q, idx) => {
+                    // 检查题目是否适用于所选性别
+                    if (q.gender === 'all' || q.gender === gender) {
+                        allQuestions.push({
+                            text: q.text,
+                            reverse: q.reverse,
+                            constitution: key
+                        });
+                        questionConstitutionMap.push(key);
+                    }
+                });
+            });
+        }
+
+        // 选择性别
+        function selectGender(gender) {
+            selectedGender = gender;
+
+            // 更新UI
+            document.getElementById('maleOption').classList.remove('selected');
+            document.getElementById('femaleOption').classList.remove('selected');
+
+            if (gender === 'male') {
+                document.getElementById('maleOption').classList.add('selected');
+            } else {
+                document.getElementById('femaleOption').classList.add('selected');
+            }
+
+            // 启用开始按钮
+            const startBtn = document.getElementById('startBtn');
+            startBtn.classList.remove('btn-disabled');
+            startBtn.disabled = false;
+        }
+
+        // 开始测评
+        function startAssessment() {
+            if (!selectedGender) {
+                alert('请先选择性别');
+                return;
+            }
+
+            // 根据性别生成题目
+            flattenQuestions(selectedGender);
+
+            document.getElementById('welcomePage').classList.add('hidden');
+            document.getElementById('questionContainer').classList.remove('hidden');
+            document.getElementById('navigation').classList.remove('hidden');
+            currentQuestionIndex = 0;
+            allAnswers = {};
+            showQuestion();
+        }
+
+        // 显示题目
+        function showQuestion() {
+            const question = allQuestions[currentQuestionIndex];
+            const constitution = constitutions[question.constitution];
+
+            document.getElementById('constitutionType').textContent = constitution.name;
+            document.getElementById('questionText').textContent = question.text;
+
+            const optionsHtml = `
+                <div class="option" onclick="selectOption(1)">没有(根本不)</div>
+                <div class="option" onclick="selectOption(2)">很少(有一点)</div>
+                <div class="option" onclick="selectOption(3)">有时(有些)</div>
+                <div class="option" onclick="selectOption(4)">经常(相当)</div>
+                <div class="option" onclick="selectOption(5)">总是(非常)</div>
+            `;
+            document.getElementById('options').innerHTML = optionsHtml;
+
+            // 恢复已选择的答案
+            const savedAnswer = allAnswers[currentQuestionIndex];
+            if (savedAnswer !== undefined) {
+                const options = document.querySelectorAll('.option');
+                options[savedAnswer - 1].classList.add('selected');
+            }
+
+            updateProgress();
+            updateNavigation();
+        }
+
+        // 选择选项
+        function selectOption(value) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            event.target.classList.add('selected');
+
+            allAnswers[currentQuestionIndex] = value;
+            updateNavigation();
+        }
+
+        // 更新进度
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / allQuestions.length * 100).toFixed(1);
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `第 ${currentQuestionIndex + 1} 题 / 共 ${allQuestions.length} 题 (${progress}%)`;
+        }
+
+        // 更新导航按钮状态
+        function updateNavigation() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (currentQuestionIndex === 0) {
+                prevBtn.classList.add('btn-disabled');
+            } else {
+                prevBtn.classList.remove('btn-disabled');
+            }
+
+            if (allAnswers[currentQuestionIndex] === undefined) {
+                nextBtn.classList.add('btn-disabled');
+            } else {
+                nextBtn.classList.remove('btn-disabled');
+            }
+        }
+
+        // 上一题
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion();
+            }
+        }
+
+        // 下一题
+        function nextQuestion() {
+            if (allAnswers[currentQuestionIndex] === undefined) {
+                alert('请先选择一个选项');
+                return;
+            }
+
+            if (currentQuestionIndex < allQuestions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            } else {
+                calculateResults();
+            }
+        }
+
+        // 计算结果
+        function calculateResults() {
+            const scores = {};
+
+            // 初始化各体质分数
+            Object.keys(constitutions).forEach(key => {
+                scores[key] = { raw: 0, count: 0 };
+            });
+
+            // 计算原始分
+            allQuestions.forEach((question, idx) => {
+                let value = allAnswers[idx];
+                if (question.reverse) {
+                    value = 6 - value; // 逆向计分
+                }
+                scores[question.constitution].raw += value;
+                scores[question.constitution].count++;
+            });
+
+            // 计算转化分,注意湿热质的分母
+            Object.keys(scores).forEach(key => {
+                const { raw, count } = scores[key];
+                // 湿热质根据性别不同,题目数量可能不同
+                // 男性: 2题(不包含女性问题), 女性: 2题(不包含男性问题)
+                // 但我们需要按照完整题目数计算
+                let totalQuestions = count;
+                if (key === 'shire') {
+                    // 湿热质原始应该有4题,但根据性别只显示了2题
+                    // 所以分母应该是4
+                    totalQuestions = 4;
+                }
+                scores[key].converted = ((raw - totalQuestions) / (totalQuestions * 4)) * 100;
+            });
+
+            displayResults(scores);
+        }
+
+            // 显示结果
+            function displayResults(scores) {
+                document.getElementById('questionContainer').classList.add('hidden');
+                document.getElementById('navigation').classList.add('hidden');
+                document.getElementById('resultContainer').classList.remove('hidden');
+                document.getElementById('progressText').textContent = '测评完成!';
+
+                // 判断体质
+                const pingheScore = scores.pinghe.converted;
+                let resultType = '';
+                let resultStatus = '';
+
+                // 获取所有得分>=40的偏颇体质
+                const biasedConstitutions = Object.keys(scores)
+                    .filter(k => k !== 'pinghe')
+                    .map(k => ({
+                        key: k,
+                        name: constitutions[k].name,
+                        score: scores[k].converted,
+                        features: constitutions[k].features,
+                        manifestations: constitutions[k].manifestations,
+                        diseases: constitutions[k].diseases,
+                        adaptation: constitutions[k].adaptation
+                    }))
+                    .filter(c => c.score >= 40)
+                    .sort((a, b) => b.score - a.score);
+
+                // 判断是否为平和质
+                if (pingheScore >= 60) {
+                    const otherScores = Object.keys(scores).filter(k => k !== 'pinghe').map(k => scores[k].converted);
+                    if (Math.max(...otherScores) < 30) {
+                        resultType = constitutions.pinghe.name;
+                        resultStatus = '是';
+                        document.getElementById('resultFeatures').textContent = constitutions.pinghe.features;
+                        document.getElementById('resultManifestations').textContent = constitutions.pinghe.manifestations;
+                        document.getElementById('resultDiseases').textContent = constitutions.pinghe.diseases;
+                        document.getElementById('resultAdaptation').textContent = constitutions.pinghe.adaptation;
+                    } else if (Math.max(...otherScores) < 40) {
+                        resultType = constitutions.pinghe.name;
+                        resultStatus = '基本是';
+                        document.getElementById('resultFeatures').textContent = constitutions.pinghe.features;
+                        document.getElementById('resultManifestations').textContent = constitutions.pinghe.manifestations;
+                        document.getElementById('resultDiseases').textContent = constitutions.pinghe.diseases;
+                        document.getElementById('resultAdaptation').textContent = constitutions.pinghe.adaptation;
+                    } else {
+                        // 有偏颇体质>=40分
+                        if (biasedConstitutions.length >= 1) {
+                            const constitutionNames = biasedConstitutions.map(c => c.name).join('、');
+                            resultType = constitutionNames;
+                            resultStatus = '是';
+
+                            // 显示第一个(得分最高)体质的详细信息
+                            const topConstitution = biasedConstitutions[0];
+                            document.getElementById('resultFeatures').textContent = topConstitution.features;
+                            document.getElementById('resultManifestations').textContent = topConstitution.manifestations;
+                            document.getElementById('resultDiseases').textContent = topConstitution.diseases;
+                            document.getElementById('resultAdaptation').textContent = topConstitution.adaptation;
+                        }
+                    }
+                } else if (biasedConstitutions.length >= 1) {
+                    // 平和质不达标,但有偏颇体质>=40分
+                    const constitutionNames = biasedConstitutions.map(c => c.name).join('、');
+                    resultType = constitutionNames;
+                    resultStatus = '是';
+
+                    // 显示第一个(得分最高)体质的详细信息
+                    const topConstitution = biasedConstitutions[0];
+                    document.getElementById('resultFeatures').textContent = topConstitution.features;
+                    document.getElementById('resultManifestations').textContent = topConstitution.manifestations;
+                    document.getElementById('resultDiseases').textContent = topConstitution.diseases;
+                    document.getElementById('resultAdaptation').textContent = topConstitution.adaptation;
+                } else {
+                    // 没有偏颇体质>=40分
+                    const biasedScores = Object.keys(scores).filter(k => k !== 'pinghe').map(k => ({
+                        key: k,
+                        score: scores[k].converted
+                    }));
+                    biasedScores.sort((a, b) => b.score - a.score);
+                    const topConstitution = biasedScores[0];
+
+                    resultType = constitutions[topConstitution.key].name;
+
+                    if (topConstitution.score >= 30) {
+                        resultStatus = '倾向是';
+                    } else {
+                        resultStatus = '否';
+                        // 如果所有偏颇体质都低于30分,判定为平和质
+                        resultType = constitutions.pinghe.name;
+                        resultStatus = '基本是';
+                    }
+
+                    const constitution = constitutions[resultType === '平和质' ? 'pinghe' : topConstitution.key];
+                    document.getElementById('resultFeatures').textContent = constitution.features;
+                    document.getElementById('resultManifestations').textContent = constitution.manifestations;
+                    document.getElementById('resultDiseases').textContent = constitution.diseases;
+                    document.getElementById('resultAdaptation').textContent = constitution.adaptation;
+                }
+
+                document.getElementById('resultType').textContent = resultType;
+                document.getElementById('resultStatus').textContent = resultStatus;
+
+                // 显示所有得分
+                let allScoresHtml = '';
+                const sortedScores = Object.keys(scores)
+                    .map(key => ({
+                        key: key,
+                        name: constitutions[key].name,
+                        score: scores[key].converted.toFixed(1)
+                    }))
+                    .sort((a, b) => b.score - a.score);
+
+                sortedScores.forEach((item, index) => {
+                    const isMain = biasedConstitutions.find(c => c.key === item.key);
+                    allScoresHtml += `
+                        <div class="score-item ${isMain ? 'main' : ''}">
+                            <span class="constitution-name">${index + 1}. ${item.name}</span>
+                            <span class="score">${item.score}分</span>
+                        </div>
+                    `;
+                });
+
+                document.getElementById('allScores').innerHTML = allScoresHtml;
+            }
+
+        // 重新测评
+        function restartAssessment() {
+            document.getElementById('resultContainer').classList.add('hidden');
+            document.getElementById('welcomePage').classList.remove('hidden');
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('progressText').textContent = '请选择您的性别开始测评';
+
+            // 重置性别选择
+            selectedGender = '';
+            document.getElementById('maleOption').classList.remove('selected');
+            document.getElementById('femaleOption').classList.remove('selected');
+            document.getElementById('startBtn').classList.add('btn-disabled');
+            document.getElementById('startBtn').disabled = true;
+
+            currentQuestionIndex = 0;
+            allAnswers = {};
+        }
+    </script>
+</body>
+</html>
